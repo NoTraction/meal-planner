@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <header class="dashboard-header">
+      <div class="header-grid">
+        <div class="header-left">
+          <a href="{{ url_for('profile') }}" class="profile-link">
+            <i class="fa-solid fa-user profile-icon"></i>
+            <span class="profile-label">Profile</span>
+          </a>
+        </div>
+        <div class="header-center">
+          <h1>Welcome to Your Dashboard</h1>
+        </div>
+        <div class="header-right">
+          <a href="{{ url_for('about') }}" class="about-link">
+            <i class="fa-solid fa-info icon about-icon"></i>
+            <span class="about-label">About</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <nav class="main-nav">
+      <button class="hamburger" id="hamburger-btn" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="{{ url_for('calendar') }}">Calendar</a></li>
+        <li><a href="{{ url_for('shopping') }}">Shopping</a></li>
+      </ul>
+    </nav>
+
+    <div class="dashboard-container">
+      <div class="sidebar">
+        <ul>
+          <li>
+            <a href="{{ url_for('calendar') }}"> Calendar </a>
+          </li>
+          <li>
+            <a href="{{ url_for('shopping', user_id=session['user_id']) }}">
+              Meal Shopping
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('logout') }}">Logout</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="dashboard-content">
+        <div class="tracking-card">
+          <h2 class="header">Meal Plan Progress</h2>
+          <div class="tracking-metrics">
+            <div>
+              <h2>Meals Completed</h2>
+              <h3>(Weakly)</h3>
+              <p>{{user[4]}} / {{user[3]}} Meals</p>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ progressmeals }}%;">
+                  {{progressmeals}}%
+                </div>
+              </div>
+            </div>
+            <div>
+              <h2>Calories Consumed</h2>
+              <h3>(Daily)</h3>
+              <p>{{ user[2] }} / {{user[1]}} kcal</p>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ progresscal }}%;">
+                  {{progresscal}}%
+                </div>
+              </div>
+            </div>
+            <div>
+              <h2>Status</h2>
+              <p>On Track</p>
+              <h1>✅</h1>
+            </div>
+          </div>
+        </div>
+        <div class="extra">
+          <div class="tracking-card">
+            <h2 class="header">Recommended Videos</h2>
+            <div class="video-scroll-wrapper">
+              <button class="scroll-arrow left" onclick="scrollVideos(-1)">
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
+              <div class="video-list" id="videoList">
+                <!-- Example links, replace href with your YouTube URLs -->
+                <a class="video-link" href="#" target="_blank">Video 1</a>
+                <a class="video-link" href="#" target="_blank">Video 2</a>
+                <a class="video-link" href="#" target="_blank">Video 3</a>
+                <a class="video-link" href="#" target="_blank">Video 4</a>
+                <a class="video-link" href="#" target="_blank">Video 5</a>
+              </div>
+              <button class="scroll-arrow right" onclick="scrollVideos(1)">
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <script>
+            function scrollVideos(direction) {
+              const container = document.getElementById("videoList");
+              const scrollAmount = 200; // px
+              container.scrollBy({
+                left: direction * scrollAmount,
+                behavior: "smooth",
+              });
+            }
+
+            document.getElementById("hamburger-btn").onclick = function (e) {
+              e.stopPropagation();
+              document.getElementById("nav-links").classList.toggle("open");
+            };
+            // Optional: close menu when clicking outside
+            window.addEventListener("click", function (e) {
+              const nav = document.getElementById("nav-links");
+              const btn = document.getElementById("hamburger-btn");
+              if (!nav.contains(e.target) && !btn.contains(e.target)) {
+                nav.classList.remove("open");
+              }
+            });
+
+            document.addEventListener("DOMContentLoaded", function () {
+              var moreBtn = document.querySelector(".more-btn");
+              var moreDropdown = document.querySelector(".more-dropdown");
+              if (moreBtn && moreDropdown) {
+                moreBtn.addEventListener("click", function (e) {
+                  e.stopPropagation();
+                  moreDropdown.classList.toggle("open");
+                });
+                // Close dropdown when clicking outside
+                document.addEventListener("click", function (e) {
+                  if (!moreDropdown.contains(e.target)) {
+                    moreDropdown.classList.remove("open");
+                  }
+                });
+              }
+            });
+          </script>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

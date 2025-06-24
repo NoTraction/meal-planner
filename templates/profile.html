@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Profile - Meal Planner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  </head>
+  <body>
+    <header class="dashboard-header">
+      <div class="header-grid">
+        <div class="header-left">
+            <a href="{{ url_for('dashboard') }}">
+              <i class="fa-solid fa-arrow-left profile-icon"></i>
+              <span class="profile-label">Dashboard</span>
+            </a>
+        </div>
+        <div class="header-center">
+          <h1>Your Profile</h1>
+        </div>
+        <div class="header-right">
+          <a href="{{ url_for('about') }}">
+            <i class="fa-solid fa-circle-info"></i> About
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-container">
+      <nav class="sidebar">
+        <ul>
+          <li><a href="#personal-details">Personal Details</a></li>
+          <li><a href="#fitness-goals">Fitness Goals</a></li>
+          <li><a href="#delete-account">Delete Account</a></li>
+          <li><a href="#privacy-policy">Privacy Policy</a></li>
+        </ul>
+      </nav>
+      <div class="dashboard-content">
+        <section id="personal-details" class="card" style="margin-bottom:2rem;">
+          <h2 class="header">Personal Details</h2>
+          <form method="POST" action="{{ url_for('profile') }}">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="{{ user.email }}" required />
+
+            <label for="password">Change Password:</label>
+            <input type="password" id="password" name="password" placeholder="New password" />
+
+            <button type="submit" name="action" value="update_personal" class="btn-primary">Update Details</button>
+          </form>
+        </section>
+
+        <section id="fitness-goals" class="card" style="margin-bottom:2rem;">
+          <h2 class="header">Fitness Goals</h2>
+          <form method="POST" action="{{ url_for('profile') }}">
+            <label for="weight">Weight (kg):</label>
+            <input type="number" id="weight" name="weight" value="{{ user.weight }}" min="30" max="300" step="any" required />
+
+            <label for="height">Height (cm):</label>
+            <input type="number" id="height" name="height" value="{{ user.height }}" min="100" max="250" step="any" required />
+
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" value="{{ user.age }}" min="5" max="120" required />
+
+            <label for="goal">Goal:</label>
+            <select name="goal" id="goal" required>
+              <option value="cut" {% if user.goal == 'cut' %}selected{% endif %}>Cut</option>
+              <option value="bulk" {% if user.goal == 'bulk' %}selected{% endif %}>Bulk</option>
+              <option value="health" {% if user.goal == 'health' %}selected{% endif %}>Health</option>
+            </select>
+
+            <label for="dietary">Dietary Requirements:</label>
+            <div style="display: flex; flex-direction: column; gap: 0.3em; margin-bottom: 0.5em;">
+              <label><input type="checkbox" name="dietary" value="none" {% if user.dietary and 'none' in user.dietary %}checked{% endif %}> None</label>
+              <label><input type="checkbox" name="dietary" value="vegetarian" {% if user.dietary and 'vegetarian' in user.dietary %}checked{% endif %}> Vegetarian</label>
+              <label><input type="checkbox" name="dietary" value="vegan" {% if user.dietary and 'vegan' in user.dietary %}checked{% endif %}> Vegan</label>
+              <label><input type="checkbox" name="dietary" value="gluten_free" {% if user.dietary and 'gluten_free' in user.dietary %}checked{% endif %}> Gluten Free</label>
+              <label><input type="checkbox" name="dietary" value="dairy_free" {% if user.dietary and 'dairy_free' in user.dietary %}checked{% endif %}> Dairy Free</label>
+              <label><input type="checkbox" name="dietary" value="halal" {% if user.dietary and 'halal' in user.dietary %}checked{% endif %}> Halal</label>
+              <label><input type="checkbox" name="dietary" value="kosher" {% if user.dietary and 'kosher' in user.dietary %}checked{% endif %}> Kosher</label>
+              <label><input type="checkbox" name="dietary" value="other" {% if user.dietary and 'other' in user.dietary %}checked{% endif %}> Other</label>
+            </div>
+            <small>Select all that apply.</small>
+
+            <label for="target_meals">Target Meals Per Week:</label>
+            <input type="number" id="target_meals" name="target_meals" value="{{ user.target_meals }}" min="1" max="35" required />
+
+            <button type="submit" name="action" value="update_goals" class="btn-primary">Update Goals</button>
+          </form>
+        </section>
+
+        <section id="delete-account" class="card" style="margin-bottom:2rem;">
+          <h2 class="header" style="color:#d9534f;">Delete Account</h2>
+          <p>
+            Deleting your account is permanent and cannot be undone. All your data will be removed from our system.
+          </p>
+          <form method="POST" action="{{ url_for('profile') }}" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+            <button type="submit" name="action" value="delete_account" class="btn-primary" style="background:#d9534f;">Delete Account</button>
+          </form>
+        </section>
+
+        <section id="privacy-policy" class="card">
+          <h2 class="header">Privacy Policy</h2>
+          <p>
+            Your privacy is important to us. Meal Planner only collects the information necessary to provide you with personalized meal plans and track your progress. We do not share your personal data with third parties. All your information is securely stored and used solely for improving your experience on our platform.
+          </p>
+          <p>
+            You can update or delete your account information at any time. For any privacy concerns, please contact our support team.
+          </p>
+        </section>
+      </div>
+    </div>
+    <script>
+      document.querySelectorAll('.sidebar a[href^="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

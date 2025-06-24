@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Meal Calendar</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='calendar.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header class="dashboard-header">
+      <div class="header-grid">
+        <div class="header-left">
+          <a href="{{ url_for('dashboard') }}">
+            <i class="fa-solid fa-arrow-left profile-icon"></i>
+            <span class="profile-label">Dashboard</span>
+          </a>
+        </div>
+        <div class="header-center">
+          <h1>Weekly Meal Calendar</h1>
+        </div>
+        <div class="header-right">
+          <a href="{{ url_for('about') }}">
+            <i class="fa-solid fa-info about-icon"></i>
+            <span class="about-label">About</span>
+          </a>
+        </div>
+      </div>
+    </header>
+    <div class="dashboard-container">
+      <div class="dashboard-content">
+        <div class="calendar-container">
+          <div class="calendar-header">
+            <a
+              href="{{ url_for('calendar', week_start=prev_week) }}"
+              class="calendar-nav-btn"
+            >
+              &lt; Previous
+            </a>
+            <div id="calendar-week-label">{{ week_label }}</div>
+            <a
+              href="{{ url_for('calendar', week_start=next_week) }}"
+              class="calendar-nav-btn"
+            >
+              Next &gt;
+            </a>
+          </div>
+          <div class="calendar-grid" id="calendar-grid">
+            {% for day in days %}
+            <div
+              class="calendar-day{% if day.date.date() == now.date() %} today{% endif %}"
+            >
+              <span class="day-label">
+                {{ day.name }}<br /><small>{{ day.short_date }}</small>
+              </span>
+              {% for meal_type in ['breakfast', 'lunch', 'dinner'] %}
+              <div class="meal-slot">
+                <b>{{ meal_type.capitalize() }}:</b>
+                {% if calendar_data[day.date_db][meal_type] %}
+                <div
+                  class="meal-card-minimal"
+                  onclick="showMealModal('{{ calendar_data[day.date_db][meal_type] }}', '{{ day.date_db }}', '{{ meal_type }}')"
+                >
+                  <span class="meal-name"
+                    >{{ calendar_data[day.date_db][meal_type] }}</span
+                  >
+                </div>
+                {% else %}
+                <span class="empty">-</span>
+                {% endif %}
+              </div>
+              {% endfor %}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <p>Meals will be added from the shopping page.</p>
+      </div>
+    </div>
+    <div id="meal-modal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2 id="modal-meal-name"></h2>
+        <div id="modal-meal-details"></div>
+        <form
+          id="delete-meal-form"
+          method="POST"
+          action="{{ url_for('delete_meal_from_calendar') }}"
+        >
+          <input type="hidden" name="date" id="delete-meal-date" />
+          <input type="hidden" name="meal_type" id="delete-meal-type" />
+          <button type="submit" class="delete-btn">
+            <i class="fa fa-trash"></i> Delete Meal
+          </button>
+        </form>
+        <form
+          id="complete-meal-form"
+          method="POST"
+          action="{{ url_for('complete_meal_from_calendar') }}"
+          style="margin-top: 1rem"
+        >
+          <input type="hidden" name="date" id="complete-meal-date" />
+          <input type="hidden" name="meal_type" id="complete-meal-type" />
+          <input type="hidden" name="meal_name" id="complete-meal-name" />
+          <button type="submit" class="complete-btn">
+            <i class="fa fa-check"></i> Complete Meal
+          </button>
+        </form>
+      </div>
+    </div>
+    <script>
+      function showMealModal(mealName, date, mealType) {
+        document.getElementById("modal-meal-name").textContent = mealName;
+        document.getElementById("modal-meal-details").innerHTML = `
+    <b>Date:</b> ${date}<br>
+    <b>Type:</b> ${mealType.charAt(0).toUpperCase() + mealType.slice(1)}
+  `;
+        document.getElementById("delete-meal-date").value = date;
+        document.getElementById("delete-meal-type").value = mealType;
+        document.getElementById("complete-meal-date").value = date;
+        document.getElementById("complete-meal-type").value = mealType;
+        document.getElementById("complete-meal-name").value = mealName;
+        document.getElementById("meal-modal").style.display = "flex";
+      }
+      function closeModal() {
+        document.getElementById("meal-modal").style.display = "none";
+      }
+      // Optional: Close modal when clicking outside content
+      window.onclick = function (event) {
+        var modal = document.getElementById("meal-modal");
+        if (event.target == modal) {
+          closeModal();
+        }
+      };
+    </script>
+  </body>
+</html>

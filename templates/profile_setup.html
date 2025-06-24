@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Profile Setup - Meal Planner</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <header class="text-center mb-2">
+      <h1>Set Up Your Profile</h1>
+      <p>Enter your details to get personalized meal plans.</p>
+    </header>
+
+    <main>
+      <div class="card" style="padding: 2.5rem 2rem">
+        <form action="{{ url_for('profile_setup') }}" method="POST">
+          <div
+            class="header mb-1"
+            style="font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem"
+          >
+            Your Information
+          </div>
+          <div class="flex-row flex-wrap" style="margin-bottom: 1.5rem">
+            <div style="flex: 1; min-width: 220px; padding: 0.5rem">
+              <label for="weight">Weight (kg):</label>
+              <input
+                type="number"
+                name="weight"
+                id="weight"
+                min="30"
+                max="300"
+                step="any"
+                required
+              />
+            </div>
+            <div style="flex: 1; min-width: 220px; padding: 0.5rem">
+              <label for="height">Height (cm):</label>
+              <input
+                type="number"
+                name="height"
+                id="height"
+                min="100"
+                max="250"
+                step="any"
+                required
+              />
+            </div>
+            <div style="flex: 1; min-width: 220px; padding: 0.5rem">
+              <label for="age">Age (years):</label>
+              <input
+                type="number"
+                name="age"
+                id="age"
+                min="5"
+                max="120"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="flex-row flex-wrap" style="margin-bottom: 1.5rem">
+            <div style="flex: 1; min-width: 220px; padding: 0.5rem">
+              <label for="dietary">Dietary Requirements:</label>
+              <div
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  gap: 0.3em;
+                  margin-bottom: 0.5em;
+                "
+              >
+                <label>
+                  <input type="checkbox" name="dietary" value="none" /> None
+                </label>
+                <label>
+                  <input type="checkbox" name="dietary" value="vegetarian" />
+                  Vegetarian
+                </label>
+                <label>
+                  <input type="checkbox" name="dietary" value="vegan" /> Vegan
+                </label>
+                <label>
+                  <input type="checkbox" name="dietary" value="gluten_free" />
+                  Gluten Free
+                </label>
+                <label>
+                  <input type="checkbox" name="dietary" value="dairy_free" />
+                  Dairy Free
+                </label>
+                <label>
+                  <input type="checkbox" name="dietary" value="halal" /> Halal
+                </label>
+                <label>
+                  <input type="checkbox" name="dietary" value="kosher" /> Kosher
+                </label>
+                <label>
+                  <input type="checkbox" name="dietary" value="other" /> Other
+                </label>
+              </div>
+              <small>Select all that apply.</small>
+            </div>
+            <div style="flex: 1; min-width: 220px; padding: 0.5rem">
+              <label for="goal">Goal:</label>
+              <select name="goal" id="goal" required>
+                <option value="">Select...</option>
+                <option value="cut">Slimming down (Cut)</option>
+                <option value="bulk">Putting on weight (Bulk)</option>
+                <option value="health">Eating Cleaner (Health)</option>
+              </select>
+            </div>
+            <div style="flex: 1; min-width: 220px; padding: 0.5rem">
+              <label for="target_meals">Target Meals Per Week:</label>
+              <input
+                type="number"
+                name="target_meals"
+                id="target_meals"
+                min="1"
+                max="35"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="text-center mb-1" style="margin-top: 1.5rem">
+            <button
+              type="submit"
+              class="btn-primary"
+              style="padding: 0.75rem 2.5rem"
+            >
+              Save Profile
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+    <section class="card" style="margin-top: 2rem">
+      <h2 class="header">Privacy Policy</h2>
+      <p>
+        Your privacy is important to us. Meal Planner only collects the
+        information necessary to provide you with personalized meal plans and
+        track your progress. We do not share your personal data with third
+        parties. All your information is securely stored and used solely for
+        improving your experience on our platform.
+      </p>
+      <p>
+        You can update or delete your account information at any time. For any
+        privacy concerns, please contact our support team.
+      </p>
+    </section>
+  </body>
+</html>

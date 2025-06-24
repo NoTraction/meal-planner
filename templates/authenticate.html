@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Two-Factor Authentication</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <style>
+      #qrCodeContainer {
+        display: none; /* hidden by default */
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Two-Factor Authentication</h2>
+    <p>Enter the authentication code from your app.</p>
+    <div class="card">
+      <form
+        method="POST"
+        id="authForm"
+        autocomplete="off"
+        style="margin-bottom: 1.5rem"
+      >
+        <div class="auth-code-inputs">
+          <input
+            type="text"
+            inputmode="numeric"
+            maxlength="1"
+            pattern="[0-9]*"
+            class="auth-digit"
+            required
+          />
+          <input
+            type="text"
+            inputmode="numeric"
+            maxlength="1"
+            pattern="[0-9]*"
+            class="auth-digit"
+            required
+          />
+          <input
+            type="text"
+            inputmode="numeric"
+            maxlength="1"
+            pattern="[0-9]*"
+            class="auth-digit"
+            required
+          />
+          <span class="auth-dash">-</span>
+          <input
+            type="text"
+            inputmode="numeric"
+            maxlength="1"
+            pattern="[0-9]*"
+            class="auth-digit"
+            required
+          />
+          <input
+            type="text"
+            inputmode="numeric"
+            maxlength="1"
+            pattern="[0-9]*"
+            class="auth-digit"
+            required
+          />
+          <input
+            type="text"
+            inputmode="numeric"
+            maxlength="1"
+            pattern="[0-9]*"
+            class="auth-digit"
+            required
+          />
+        </div>
+        <input type="hidden" name="auth_code" id="auth_code" />
+        <button type="submit" style="margin-top: 1.5rem">Verify</button>
+      </form>
+
+      <button id="toggleQrBtn">Show QR Code</button>
+      <div id="qrCodeContainer">{{ qr_code_img | safe }}</div>
+
+      <script>
+        // Combine digits into hidden input on submit
+        document
+          .getElementById("authForm")
+          .addEventListener("submit", function (e) {
+            const digits = Array.from(document.querySelectorAll(".auth-digit"))
+              .map((i) => i.value)
+              .join("");
+            document.getElementById("auth_code").value = digits;
+          });
+
+        // Auto-focus next input
+        document.querySelectorAll(".auth-digit").forEach((input, idx, arr) => {
+          input.addEventListener("input", function () {
+            if (this.value.length === 1 && idx < arr.length - 1) {
+              arr[idx + 1].focus();
+            }
+          });
+          input.addEventListener("keydown", function (e) {
+            if (e.key === "Backspace" && !this.value && idx > 0) {
+              arr[idx - 1].focus();
+            }
+          });
+        });
+
+        // QR toggle
+        const toggleBtn = document.getElementById("toggleQrBtn");
+        const qrCodeDiv = document.getElementById("qrCodeContainer");
+        toggleBtn.addEventListener("click", () => {
+          const isHidden =
+            window.getComputedStyle(qrCodeDiv).display === "none";
+          if (isHidden) {
+            qrCodeDiv.style.display = "block";
+            toggleBtn.textContent = "Hide QR Code";
+          } else {
+            qrCodeDiv.style.display = "none";
+            toggleBtn.textContent = "Show QR Code";
+          }
+        });
+
+        // Paste event: spread pasted value across all boxes
+        document.querySelectorAll(".auth-digit").forEach((input, idx, arr) => {
+          input.addEventListener("paste", function (e) {
+            const paste = (e.clipboardData || window.clipboardData).getData(
+              "text"
+            );
+            if (/^\d{6}$/.test(paste)) {
+              e.preventDefault();
+              for (let i = 0; i < 6; i++) {
+                arr[i].value = paste[i];
+              }
+              arr[5].focus();
+            }
+          });
+        });
+      </script>
+    </div>
+  </body>
+</html>

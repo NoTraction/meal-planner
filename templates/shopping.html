@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shopping - Meals</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='shopping.css') }}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+  <header class="dashboard-header">
+    <div class="header-grid">
+      <div class="header-left">
+        <a href="{{ url_for('dashboard') }}">
+          <i class="fa-solid fa-arrow-left profile-icon"></i>
+          <span class="profile-label">Dashboard</span>
+        </a>
+      </div>
+      <div class="header-center">
+        <h1>Shopping - Meals</h1>
+      </div>
+      <div class="header-right">
+        <a href="{{ url_for('about') }}">
+          <i class="fa-solid fa-info about-icon"></i>
+          <span class="about-label">About</span>
+        </a>
+      </div>
+    </div>
+  </header>
+  <div class="dashboard-container">
+    <div class="dashboard-content">
+      <div class="shopping-filter-bar">
+        <form id="filter-form">
+          <label for="meal_type">Category:</label>
+          <select id="meal_type" name="meal_type">
+            <option value="all">All</option>
+            <option value="breakfast">Breakfast</option>
+            <option value="lunch">Lunch</option>
+            <option value="dinner">Dinner</option>
+            <option value="snack">Snack</option>
+          </select>
+          <label for="goal">Goal:</label>
+          <select id="goal" name="goal">
+            <option value="all">All</option>
+            <option value="bulk" {% if profile_goal == 'bulk' %}selected{% endif %}>Bulk</option>
+            <option value="cut" {% if profile_goal == 'cut' %}selected{% endif %}>Cut</option>
+            <option value="health" {% if profile_goal == 'health' %}selected{% endif %}>Health</option>
+          </select>
+          <button type="submit">Filter</button>
+        </form>
+      </div>
+      <div id="meals-list" class="meals-list">
+        {% for meal in meals %}
+        <div class="meal-card" data-meal-type="{{ meal.meal_type }}" data-goal="{% if meal.bulk %}bulk {% endif %}{% if meal.cut %}cut {% endif %}{% if meal.health %}health{% endif %}">
+          <div class="meal-card-header">
+            <h3>{{ meal.name }}</h3>
+            <span class="meal-type">{{ meal.meal_type|capitalize }}</span>
+          </div>
+          <div class="meal-info">
+            <span><b>Calories:</b> {{ meal.calories }}</span>
+            <span><b>Ingredients:</b> {{ meal.ingredients }}</span>
+            <span>
+              <b>Tags:</b>
+              {% if meal.bulk %}<span class="tag tag-bulk">Bulk</span>{% endif %}
+              {% if meal.cut %}<span class="tag tag-cut">Cut</span>{% endif %}
+              {% if meal.health %}<span class="tag tag-health">Health</span>{% endif %}
+            </span>
+          </div>
+          <form method="POST" action="{{ url_for('add_meal_to_calendar') }}">
+            <input type="hidden" name="meal_id" value="{{ meal.id }}">
+            <label for="date-{{ meal.id }}">Add to date:</label>
+            <select name="date" id="date-{{ meal.id }}" required>
+              {% for d in week_dates %}
+                <option value="{{ d.value }}"
+                  {% if d.value == now.strftime('%Y-%m-%d') %}selected{% endif %}>
+                  {{ d.label }}
+                </option>
+              {% endfor %}
+            </select>
+            <label for="meal_type-{{ meal.id }}">Type:</label>
+            <select name="meal_type" id="meal_type-{{ meal.id }}" required>
+              <option value="breakfast" {% if meal.meal_type == 'breakfast' %}selected{% endif %}>Breakfast</option>
+              <option value="lunch" {% if meal.meal_type == 'lunch' %}selected{% endif %}>Lunch</option>
+              <option value="dinner" {% if meal.meal_type == 'dinner' %}selected{% endif %}>Dinner</option>
+              <option value="snack" {% if meal.meal_type == 'snack' %}selected{% endif %}>Snack</option>
+            </select>
+            <button type="submit" class="add-btn"><i class="fa fa-plus"></i> Add</button>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <script>
+    // Filtering logic
+    document.getElementById('filter-form').onsubmit = function(e) {
+      e.preventDefault();
+      const type = document.getElementById('meal_type').value;
+      const goal = document.getElementById('goal').value;
+      document.querySelectorAll('.meal-card').forEach(card => {
+        const cardType = card.getAttribute('data-meal-type');
+        const cardGoal = card.getAttribute('data-goal');
+        let show = true;
+        if (type !== 'all' && cardType !== type) show = false;
+        if (goal !== 'all' && !cardGoal.includes(goal)) show = false;
+        card.style.display = show ? '' : 'none';
+      });
+    };
+    // Default filter on page load (matches profile goal)
+    window.onload = function() {
+      document.getElementById('filter-form').dispatchEvent(new Event('submit'));
+    };
+  </script>
+</body>
+</html>

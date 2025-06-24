@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About - Meal Planner</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <header class="dashboard-header">
+      <div class="header-grid">
+        <div class="header-left">
+          <a
+            href="{% if session.authenticated %}{{ url_for('dashboard') }}{% else %}{{ url_for('index') }}{% endif %}"
+          >
+            <i class="fa-solid fa-arrow-left profile-icon"></i>
+            <span class="profile-label">Home</span>
+          </a>
+        </div>
+        <div class="header-center">
+          <h1>About Meal Planner</h1>
+        </div>
+        <div class="header-right"></div>
+      </div>
+    </header>
+    <main>
+      <div
+        class="card"
+        style="max-width: 700px; margin: 2rem auto; padding: 2.5rem 2rem"
+      >
+        <h2 class="header" style="margin-bottom: 1rem">What We Do</h2>
+        <p>
+          Meal Planner is your personal assistant for healthy eating and
+          efficient meal management. Our platform helps you:
+        </p>
+        <ul style="margin: 1.5rem 0 1rem 2rem">
+          <li>Set up your dietary preferences and health goals</li>
+          <li>Get personalized meal plans based on your profile</li>
+          <li>Track your daily calories and weekly meal progress</li>
+          <li>Generate shopping lists for your planned meals</li>
+          <li>Discover recommended videos and resources for healthy living</li>
+        </ul>
+        <p>
+          Whether you want to cut, bulk, or simply eat healthier, Meal Planner
+          makes it easy to stay on track and reach your goals. All your data is
+          private and used only to improve your meal planning experience.
+        </p>
+        <p style="margin-top: 2rem">
+          <strong>Start planning, start thriving!</strong>
+        </p>
+        <div class="text-center" style="margin-top: 2.5rem">
+          <a
+            href="{% if session.authenticated %}{{ url_for('dashboard') }}{% else %}{{ url_for('index') }}{% endif %}"
+            class="btn-primary"
+            style="padding: 0.75rem 2.5rem; text-decoration: none"
+          >
+            Home
+          </a>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
